@@ -64,18 +64,25 @@ class QWinRegistryKey
 {
 public:
     Q_DISABLE_COPY(QWinRegistryKey)
-
     QWinRegistryKey();
     explicit QWinRegistryKey(HKEY parentHandle, QStringView subKey,
                              REGSAM permissions = KEY_READ, REGSAM access = 0);
     ~QWinRegistryKey();
 
     QWinRegistryKey(QWinRegistryKey &&other) noexcept
-        : m_key(std::exchange(other.m_key, nullptr)) {}
+        : m_key(exchange(other.m_key, nullptr)) {}
     QWinRegistryKey &operator=(QWinRegistryKey &&other) noexcept {
         QWinRegistryKey moved(std::move(other));
         swap(moved);
         return *this;
+    }
+    template<class _Ty,
+    class _Other = _Ty> inline
+    _Ty exchange(_Ty& _Val, _Other&& _New_val)
+    {	// assign _New_val to _Val, return previous _Val
+        _Ty _Old_val = std::move(_Val);
+        _Val = std::forward<_Other>(_New_val);
+        return (_Old_val);
     }
     void swap(QWinRegistryKey &other) noexcept { std::swap(m_key, other.m_key); }
 
