@@ -121,7 +121,12 @@ void MainWindow::changeEvent(QEvent *event)
 void MainWindow::paintEvent(QPaintEvent *event)
 {
     QMainWindow::paintEvent(event);
-    if ((windowState() == Qt::WindowNoState) && !Utilities::isWin11OrGreater()) {
+#ifdef Q_OS_WINDOWS
+    if ((windowState() == Qt::WindowNoState) && !Utilities::isWin11OrGreater())
+#else
+    if ((windowState() == Qt::WindowNoState))
+#endif
+    {
         const int w = width();
         const int h = height();
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
